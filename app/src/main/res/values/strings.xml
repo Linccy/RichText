@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RichText</string>
+    <string name="label_rich_text">RichText</string>
+    <string name="label_simple_rich_text">Simple RichText</string>
+</resources>
