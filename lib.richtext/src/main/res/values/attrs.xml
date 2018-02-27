@@ -2,7 +2,7 @@
 
 <resources>
 
-    <declare-styleable name="RichEditText">
+    <declare-styleable name="RichImageEditText">
         <attr name="bulletColor" format="reference|color" />
         <attr name="bulletRadius" format="reference|dimension" />
         <attr name="bulletGapWidth" format="reference|dimension" />

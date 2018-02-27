@@ -16,11 +16,11 @@ import android.text.style.UnderlineSpan;
 
 public class HtmlParser {
     public static Spanned fromHtml(String source, Html.ImageGetter imageGetter) {
-        return Html.fromHtml(source, imageGetter, new MyTagHandler());
+        return Html.fromHtml(source, imageGetter, new TagHandler());
     }
 
     public static Spanned fromHtml(String source) {
-        return Html.fromHtml(source, null, new MyTagHandler());
+        return Html.fromHtml(source, null, new TagHandler());
     }
 
     public static String toHtml(Spanned text) {

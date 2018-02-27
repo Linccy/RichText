@@ -6,9 +6,8 @@ import android.graphics.Path;
 import android.os.Parcel;
 import android.text.Layout;
 import android.text.Spanned;
-import android.text.style.BulletSpan;
 
-public class MyBulletSpan extends BulletSpan {
+public class BulletSpan extends android.text.style.BulletSpan {
     private static final int DEFAULT_COLOR = 0;
     private static final int DEFAULT_RADIUS = 3;
     private static final int DEFAULT_GAP_WIDTH = 2;
@@ -18,13 +17,13 @@ public class MyBulletSpan extends BulletSpan {
     private int bulletRadius = DEFAULT_RADIUS;
     private int bulletGapWidth = DEFAULT_GAP_WIDTH;
 
-    public MyBulletSpan(int bulletColor, int bulletRadius, int bulletGapWidth) {
+    public BulletSpan(int bulletColor, int bulletRadius, int bulletGapWidth) {
         this.bulletColor = bulletColor != 0 ? bulletColor : DEFAULT_COLOR;
         this.bulletRadius = bulletRadius != 0 ? bulletRadius : DEFAULT_RADIUS;
         this.bulletGapWidth = bulletGapWidth != 0 ? bulletGapWidth : DEFAULT_GAP_WIDTH;
     }
 
-    public MyBulletSpan(Parcel src) {
+    public BulletSpan(Parcel src) {
         super(src);
         this.bulletColor = src.readInt();
         this.bulletRadius = src.readInt();
