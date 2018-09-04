@@ -22,14 +22,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
 
-import com.linccy.richtext.util.MatchEntity;
 import com.linccy.richtext.util.MatchRule;
 import com.linccy.richtext.watcher.TextWatcherAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,25 +34,21 @@ import java.util.regex.Pattern;
  * 实现了@(AT)和##的Tag匹配功能，
  * 具有Tag删除判断，和光标定位判断；预防用户胡乱篡改
  *
- * @author linccy
- * @version 1.0.0
+ * @author linchenxi
+ * @version 1.1
  */
-@SuppressWarnings("all")
 public class RichEditText extends AppCompatEditText {
     public static final String MATCH_MENTION = MatchRule.MATCH_MENTION;
     public static final String MATCH_TOPIC = MatchRule.MATCH_TOPIC;
     public static final String MATCH_URI = MatchRule.MATCH_URI;
     public static final String MATCH_REALM_NAME = MatchRule.MATCH_REALM_NAME;
-    public static final String MATCH_TAG_FORMAT = "<" + RichConfig.getTagHeard()+ "%s " +"id=%s" + ">%s</"+ RichConfig.getTagHeard()+ "%s" + ">";
-    public static final int AT_USER_TEXT_COLOR = -432079;
+    public static final int AT_USER_TEXT_COLOR = -11172680;
     public static final int ADD_TOPIC_TEXT_COLOR = AT_USER_TEXT_COLOR;
     public static final int ADD_LINK_TEXT_COLOR = -11172680;
     public static boolean DEBUG = false;
     private static final String TAG = RichEditText.class.getName();
     private final RichEditText.TagSpanTextWatcher mTagSpanTextWatcher = new RichEditText.TagSpanTextWatcher();
     private RichEditText.OnKeyArrivedListener mOnKeyArrivedListener;
-
-    private Map<String, String> shouldReplaceStrs = new HashMap<>();
 
     public RichEditText(Context context) {
         super(context);
@@ -75,7 +66,6 @@ public class RichEditText extends AppCompatEditText {
     }
 
     private void init() {
-        shouldReplaceStrs.clear();
         addTextChangedListener(mTagSpanTextWatcher);
     }
 
@@ -147,7 +137,7 @@ public class RichEditText extends AppCompatEditText {
             // Handle to the clipboard service.
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             // Handle the data.
-            if (clipboard.hasPrimaryClip()) {
+            if (clipboard != null && clipboard.hasPrimaryClip()) {
                 ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                 if (item != null) {
                     // Gets the clipboard date to string and do trim
@@ -160,7 +150,7 @@ public class RichEditText extends AppCompatEditText {
                     spannablePaste = matchMention(spannablePaste);
                     spannablePaste = matchTopic(spannablePaste);
                     spannablePaste = matchLink(spannablePaste);
-                    getText().replace(getSelectionStart(), getSelectionEnd(), spannablePaste);
+                    getText().replace(getSelectionStart() > 0 ? getSelectionStart() : 0, getSelectionEnd() > 0 ? getSelectionEnd() : 0, spannablePaste);
                     return true;
                 }
             }
@@ -198,6 +188,9 @@ public class RichEditText extends AppCompatEditText {
         int selStart = getSelectionStart();
         int selEnd = getSelectionEnd();
 
+        selStart = selStart > 0 ? selStart : 0;
+        selEnd = selEnd > 0 ? selEnd : 0;
+
         int selStartBefore = selStart - 1;
         if (selStart == selEnd && selStart > 0
                 && chr.equals(msg.subSequence(selStartBefore, selEnd).toString())
@@ -211,26 +204,27 @@ public class RichEditText extends AppCompatEditText {
     /**
      * 添加提到字符串
      *
-     * @param mentions 提及的人或标签，不含@、# 由{@link MatchEntity#formatRule} 控制
+     * @param mentions 提及的人，不含@
      */
     @SuppressWarnings("unused")
-    public void appendMention(MatchEntity... mentions) {
+    public void appendMention(String... mentions) {
+        appendMention(true, mentions);
+    }
+
+    public void appendMention(boolean needSpace, String... mentions) {
         if (mentions == null || mentions.length == 0)
             return;
 
-        String mentionStr = "";
+        StringBuilder mentionStr = new StringBuilder();
 
-        for (MatchEntity mention : mentions) {
-            if (mention == null || TextUtils.isEmpty(mention.getContent().trim())
-                    || TextUtils.isEmpty(filterDirty(mention.getContent())))
+        for (String mention : mentions) {
+            if (mention == null || TextUtils.isEmpty(mention = mention.trim())
+                    || TextUtils.isEmpty(mention = filterDirty(mention)))
                 continue;
-            mention.setContent(filterDirty(mention.getContent()).trim());
-            mentionStr += String.format(mention.getFormatRule(), mention.getContent());
-            //是否已添加过
-            if(!shouldReplaceStrs.containsKey(mentionStr)) {
-                // 生成<aaa-type id=cccc>content</aaa-type>这种形式并保存在#shouldReplaceStrs中
-                String result = String.format(MATCH_TAG_FORMAT, mention.getType(), mention.getId(), String.format(mention.getFormatRule(), mention.getContent()), mention.getType());
-                shouldReplaceStrs.put(mentionStr, result);
+            if (needSpace) {
+                mentionStr.append(String.format("@%s", mention).trim() + " ");
+            } else {
+                mentionStr.append(String.format("@%s", mention).trim());
             }
         }
         if (TextUtils.isEmpty(mentionStr))
@@ -252,13 +246,13 @@ public class RichEditText extends AppCompatEditText {
         if (topics == null || topics.length == 0)
             return;
 
-        String topicStr = "";
+        StringBuilder topicStr = new StringBuilder();
 
         for (String topic : topics) {
             if (topic == null || TextUtils.isEmpty(topic = topic.trim())
                     || TextUtils.isEmpty(topic = filterDirty(topic)))
                 continue;
-            topicStr += String.format("#%s# ", topic);
+            topicStr.append(String.format("#%s# ", topic));
         }
         if (TextUtils.isEmpty(topicStr))
             return;
@@ -272,7 +266,7 @@ public class RichEditText extends AppCompatEditText {
     /**
      * 添加链接字符串
      *
-     * @param topics 话题，不含#
+     * @param links
      */
     @SuppressWarnings("unused")
     public void appendLink(String... links) {
@@ -296,6 +290,10 @@ public class RichEditText extends AppCompatEditText {
         replaceLastChar(" ", spannable);
     }
 
+    public String toRealResult() {
+        return getText().toString();
+    }
+
     private class TagSpanTextWatcher extends TextWatcherAdapter {
         private RichEditText.TagSpan willDelSpan;
 
@@ -316,6 +314,10 @@ public class RichEditText extends AppCompatEditText {
         boolean checkKeyDel() {
             int selStart = getSelectionStart();
             int selEnd = getSelectionEnd();
+
+            selStart = selStart > 0 ? selStart : 0;
+            selEnd = selEnd > 0 ? selEnd : 0;
+
             Editable message = getText();
             log("TagSpanTextWatcher#checkKeyDel:" + selStart + " " + selEnd);
             if (selStart == selEnd) {
@@ -381,6 +383,35 @@ public class RichEditText extends AppCompatEditText {
         boolean onTopicKeyArrived(RichEditText text);
     }
 
+    public void initContentWitchMention(CharSequence text) {
+        if (TextUtils.isEmpty(text)) {
+            setText("");
+            return;
+        }
+        Pattern pattern = Pattern.compile(MATCH_MENTION);
+        Matcher matcher = pattern.matcher(text);
+
+        int matcherEnd = 0;
+        while (matcher.find()) {
+            String str = matcher.group();
+            int currMatcherStart = matcher.start();
+            int currMatcherEnd = matcher.end();
+            append(text.subSequence(matcherEnd, currMatcherStart));
+            appendMention(false, str);
+            matcherEnd = currMatcherEnd;
+        }
+        if (TextUtils.isEmpty(getText())) {
+            append(text);
+        } else if (matcherEnd > 0 && matcherEnd < text.length()) {
+            CharSequence end = text.subSequence(matcherEnd, text.length());
+            if (String.valueOf(end).startsWith(" ")) {
+                append(end);
+            } else {
+                append(" " + end);
+            }
+        }
+    }
+
     public static Spannable matchMention(Spannable spannable) {
         String text = spannable.toString();
 
@@ -442,14 +473,6 @@ public class RichEditText extends AppCompatEditText {
         }
 
         return spannable;
-    }
-
-    public String toRealResult() {
-        String content = getText().toString();
-        for(Map.Entry<String, String> entry : shouldReplaceStrs.entrySet()) {
-            content = content.replaceAll(entry.getKey(), entry.getValue());
-        }
-        return content;
     }
 
     private static void log(String msg) {

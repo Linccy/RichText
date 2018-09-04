@@ -1,5 +1,6 @@
 package com.linccy.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,11 @@ import com.linccy.richtext.util.MatchEntity;
  */
 
 public class SimpleRichTextActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final int REQUEST_AT_USER = 0x11;
+    public static final int REQUEST_ADD_TOPIC = 0x12;
+    public static final int REQUEST_ADD_LINK = 0x13;
+    public static final String TYPE_USER = "user";
+
     private RichEditText richEditText;
 
     private RichTextView tvPreview;
@@ -33,13 +39,7 @@ public class SimpleRichTextActivity extends AppCompatActivity implements View.On
         tvPreview = findViewById(R.id.tv_result_preview);
         tvResult = findViewById(R.id.tv_result_content);
 
-        tvPreview.setMovementMethod(LinkMovementMethod.getInstance());//必须设置否则clickSpan无效
-        tvPreview.setTagClickListener(new RichTextView.OnTagClickListener() {
-            @Override
-            public void onClick(String type, String id, String content, String realStr) {
-                Toast.makeText(SimpleRichTextActivity.this, "点击了" + content + " id=" + id + "\n" + realStr, Toast.LENGTH_LONG).show();
-            }
-        });
+        DemoTools.initRichTextView(tvPreview);
 
         findViewById(R.id.at_user).setOnClickListener(this);
         findViewById(R.id.add_tag1).setOnClickListener(this);
@@ -52,7 +52,8 @@ public class SimpleRichTextActivity extends AppCompatActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.at_user:
-                richEditText.appendMention(new MatchEntity("1", "user", "Linccy", "@%s "));
+//                richEditText.appendMention(new MatchEntity("1", "user", "Linccy", "@%s "));
+                TagListActivity.startActivityForResult(this, REQUEST_AT_USER);
                 break;
 
 //            case R.id.add_tag1:
@@ -80,5 +81,29 @@ public class SimpleRichTextActivity extends AppCompatActivity implements View.On
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            Entity entity;
+            switch (requestCode) {
+                case SimpleRichTextActivity.REQUEST_AT_USER:
+                    entity = (Entity) data.getSerializableExtra(TagListActivity.ENTITY);
+                    richEditText.appendMention(entity.getName());
+                    break;
+
+                case SimpleRichTextActivity.REQUEST_ADD_TOPIC:
+                    entity = (Entity) data.getSerializableExtra(TagListActivity.ENTITY);
+                    richEditText.appendTopic(entity.getName());
+                    break;
+
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+            }
+        }
+
+
     }
 }

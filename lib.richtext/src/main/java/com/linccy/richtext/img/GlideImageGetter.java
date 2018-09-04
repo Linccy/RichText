@@ -20,9 +20,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.HashSet;
 
-/**
- * Created by yixuanxuan on 16/8/10.
- */
 public abstract class GlideImageGetter implements Html.ImageGetter {
 
     private HashSet<Target> targets;

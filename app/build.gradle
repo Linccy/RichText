@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
     compileSdkVersion 26
@@ -27,4 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.jph.takephoto:takephoto_library:4.0.3'
     implementation project(':lib.richtext')
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'com.android.support:multidex:1.0.3'
 }

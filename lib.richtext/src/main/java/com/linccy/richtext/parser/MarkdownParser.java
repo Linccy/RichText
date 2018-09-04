@@ -33,7 +33,7 @@ public class MarkdownParser {
             ParagraphStyle[] styles = text.getSpans(i, next, ParagraphStyle.class);
             if (styles.length == 2) {
                 if (styles[0] instanceof BulletSpan && styles[1] instanceof QuoteSpan) {
-                    // Let a <br> follow the BulletSpan or QuoteSpan end, so next++
+                    // Let a <br> follow the RichBulletSpan or RichQuoteSpan end, so next++
                     withinBulletThenQuote(out, text, i, next++);
                 } else if (styles[0] instanceof QuoteSpan && styles[1] instanceof BulletSpan) {
                     withinQuoteThenBullet(out, text, i, next++);

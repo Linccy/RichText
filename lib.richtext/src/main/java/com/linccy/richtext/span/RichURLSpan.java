@@ -3,17 +3,17 @@ package com.linccy.richtext.span;
 import android.os.Parcel;
 import android.text.TextPaint;
 
-public class URLSpan extends android.text.style.URLSpan {
+public class RichURLSpan extends android.text.style.URLSpan {
     private int linkColor = 0;
     private boolean linkUnderline = true;
 
-    public URLSpan(String url, int linkColor, boolean linkUnderline) {
+    public RichURLSpan(String url, int linkColor, boolean linkUnderline) {
         super(url);
         this.linkColor = linkColor;
         this.linkUnderline = linkUnderline;
     }
 
-    public URLSpan(Parcel src) {
+    public RichURLSpan(Parcel src) {
         super(src);
         this.linkColor = src.readInt();
         this.linkUnderline = src.readInt() != 0;

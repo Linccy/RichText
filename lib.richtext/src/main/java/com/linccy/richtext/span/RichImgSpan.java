@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.style.ImageSpan;
 
-public class ImgSpan extends ImageSpan {
+public class RichImgSpan extends ImageSpan {
     private Uri mUri;
-    public ImgSpan(Context context, Bitmap b, Uri uri) {
+    public RichImgSpan(Context context, Bitmap b, Uri uri) {
         super(context, b);
         mUri = uri;
     }

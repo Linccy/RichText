@@ -13,9 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by yixuanxuan on 16/5/12.
- */
 public class BitmapUtil {
 
     public static boolean createImageThumbnail(String sourcePath, String targetPath) {

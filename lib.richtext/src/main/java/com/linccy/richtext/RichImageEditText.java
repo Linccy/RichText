@@ -25,10 +25,10 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.linccy.richtext.img.GlideImageGetter;
 import com.linccy.richtext.parser.HtmlParser;
 import com.linccy.richtext.parser.MarkdownParser;
-import com.linccy.richtext.span.BulletSpan;
-import com.linccy.richtext.span.ImgSpan;
-import com.linccy.richtext.span.QuoteSpan;
-import com.linccy.richtext.span.URLSpan;
+import com.linccy.richtext.span.RichBulletSpan;
+import com.linccy.richtext.span.RichImgSpan;
+import com.linccy.richtext.span.RichQuoteSpan;
+import com.linccy.richtext.span.RichURLSpan;
 import com.linccy.richtext.util.BitmapUtil;
 
 import java.util.ArrayList;
@@ -252,7 +252,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
 
     public void image(Uri uri, Bitmap pic) {
         SpannableString ss = new SpannableString(" \n");
-        ImgSpan span = new ImgSpan(getContext(), pic, uri);
+        RichImgSpan span = new RichImgSpan(getContext(), pic, uri);
         ss.setSpan(span, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         int start = getSelectionStart();
         getEditableText().insert(start, ss);// 设置ss要添加的位置
@@ -398,7 +398,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
         }
     }
 
-    // BulletSpan ==================================================================================
+    // RichBulletSpan ==================================================================================
 
     public void bullet(boolean valid) {
         if (valid) {
@@ -438,7 +438,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
             }
 
             if (bulletStart < bulletEnd) {
-                getEditableText().setSpan(new BulletSpan(bulletColor, bulletRadius, bulletGapWidth), bulletStart, bulletEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getEditableText().setSpan(new RichBulletSpan(bulletColor, bulletRadius, bulletGapWidth), bulletStart, bulletEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
     }
@@ -531,7 +531,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
         return spans.length > 0;
     }
 
-    // QuoteSpan ===================================================================================
+    // RichQuoteSpan ===================================================================================
 
     public void quote(boolean valid) {
         if (valid) {
@@ -570,7 +570,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
             }
 
             if (quoteStart < quoteEnd) {
-                getEditableText().setSpan(new QuoteSpan(quoteColor, quoteStripeWidth, quoteGapWidth), quoteStart, quoteEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                getEditableText().setSpan(new RichQuoteSpan(quoteColor, quoteStripeWidth, quoteGapWidth), quoteStart, quoteEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
     }
@@ -663,7 +663,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
         return spans.length > 0;
     }
 
-    // URLSpan =====================================================================================
+    // RichURLSpan =====================================================================================
 
     public void link(String link) {
         link(link, getSelectionStart(), getSelectionEnd());
@@ -684,7 +684,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
         }
 
         linkInvalid(start, end);
-        getEditableText().setSpan(new URLSpan(link, linkColor, linkUnderline), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        getEditableText().setSpan(new RichURLSpan(link, linkColor, linkUnderline), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     // Remove all span in selection, not like the boldInvalid()
@@ -891,7 +891,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
             int spanEnd = editable.getSpanEnd(span);
             spanEnd = 0 < spanEnd && spanEnd < editable.length() && editable.charAt(spanEnd) == '\n' ? spanEnd - 1 : spanEnd;
             editable.removeSpan(span);
-            editable.setSpan(new BulletSpan(bulletColor, bulletRadius, bulletGapWidth), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editable.setSpan(new RichBulletSpan(bulletColor, bulletRadius, bulletGapWidth), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         android.text.style.QuoteSpan[] quoteSpans = editable.getSpans(start, end, android.text.style.QuoteSpan.class);
@@ -900,7 +900,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
             int spanEnd = editable.getSpanEnd(span);
             spanEnd = 0 < spanEnd && spanEnd < editable.length() && editable.charAt(spanEnd) == '\n' ? spanEnd - 1 : spanEnd;
             editable.removeSpan(span);
-            editable.setSpan(new QuoteSpan(quoteColor, quoteStripeWidth, quoteGapWidth), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editable.setSpan(new RichQuoteSpan(quoteColor, quoteStripeWidth, quoteGapWidth), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         android.text.style.URLSpan[] urlSpans = editable.getSpans(start, end, android.text.style.URLSpan.class);
@@ -908,7 +908,7 @@ public class RichImageEditText extends RichEditText implements TextWatcher {
             int spanStart = editable.getSpanStart(span);
             int spanEnd = editable.getSpanEnd(span);
             editable.removeSpan(span);
-            editable.setSpan(new URLSpan(span.getURL(), linkColor, linkUnderline), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editable.setSpan(new RichURLSpan(span.getURL(), linkColor, linkUnderline), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
     }

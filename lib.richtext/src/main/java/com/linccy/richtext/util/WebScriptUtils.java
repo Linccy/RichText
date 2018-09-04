@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class WebScriptUtils {
     /**
-     *  圈子长文 @ 等的点击事件处理
+     *  webView中@ 等自定义标签的点击事件处理
      * */
     private static final String TRIBE_ARTICLE_FUNCTION_NAME = "whichElement";
 
@@ -33,7 +33,7 @@ public class WebScriptUtils {
             "}";
 
     /**
-     * 圈子长文html格式
+     * html样式 通过js回调响应user标签
      * */
     public static String getTribeArticleHtml(Context context, String body) {
         String html = "<!DOCTYPE html>"
