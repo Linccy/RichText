@@ -3,10 +3,8 @@ package com.linccy.richtext.img;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 
-/**
- * Created by yixuanxuan on 16/8/10.
- */
 public class UrlDrawable extends BitmapDrawable implements Drawable.Callback {
     private Drawable drawable;
 
@@ -21,17 +19,17 @@ public class UrlDrawable extends BitmapDrawable implements Drawable.Callback {
     }
 
     @Override
-    public void scheduleDrawable(Drawable who, Runnable what, long when) {
+    public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
         scheduleSelf(what, when);
     }
 
     @Override
-    public void unscheduleDrawable(Drawable who, Runnable what) {
+    public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
         unscheduleSelf(what);
     }
 
     @Override
-    public void invalidateDrawable(Drawable who) {
+    public void invalidateDrawable(@NonNull Drawable who) {
         invalidateSelf();
     }
 

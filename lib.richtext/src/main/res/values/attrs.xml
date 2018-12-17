@@ -2,7 +2,8 @@
 
 <resources>
 
-    <declare-styleable name="RichEditText">
+
+    <declare-styleable name="RichImageEditText">
         <attr name="bulletColor" format="reference|color" />
         <attr name="bulletRadius" format="reference|dimension" />
         <attr name="bulletGapWidth" format="reference|dimension" />
@@ -13,6 +14,15 @@
         <attr name="quoteColor" format="reference|color" />
         <attr name="quoteStripeWidth" format="reference|dimension" />
         <attr name="quoteCapWidth" format="reference|dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="FolderTextView">
+        <attr name="foldText" format="string"/>
+        <attr name="unFoldText" format="string"/>
+        <attr name="foldLine" format="integer"/>
+        <attr name="tailTextColor" format="color"/>
+        <attr name="canFoldAgain" format="boolean"/>
+        <attr name="foldEnable" format="boolean"/>
     </declare-styleable>
 
 </resources>

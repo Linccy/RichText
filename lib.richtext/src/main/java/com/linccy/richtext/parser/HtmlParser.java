@@ -14,13 +14,17 @@ import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 
+import com.linccy.richtext.TagHandler;
+import com.linccy.richtext.span.VideoSpan;
+import com.linccy.richtext.span.VoiceSpan;
+
 public class HtmlParser {
     public static Spanned fromHtml(String source, Html.ImageGetter imageGetter) {
-        return Html.fromHtml(source, imageGetter, new MyTagHandler());
+        return Html.fromHtml(source, imageGetter, new TagHandler());
     }
 
     public static Spanned fromHtml(String source) {
-        return Html.fromHtml(source, null, new MyTagHandler());
+        return Html.fromHtml(source, null, new TagHandler());
     }
 
     public static String toHtml(Spanned text) {
@@ -168,10 +172,17 @@ public class HtmlParser {
                 }
 
                 if (span instanceof ImageSpan) {
-                    out.append("<img width=\"100%\" src=\"");
-                    out.append(((ImageSpan) span).getSource());
-                    out.append("\"/>");
-
+                    if(span instanceof VideoSpan) {
+                        out.append(span.toString());
+                    } else if(span instanceof VoiceSpan) {
+                        out.append("<audio width=\"100%\" src=\"");
+                        out.append(((VoiceSpan) span).getSource());
+                        out.append("\"/>");
+                    } else {
+                        out.append("<img width=\"100%\" src=\"");
+                        out.append(((ImageSpan) span).getSource());
+                        out.append("\"/>");
+                    }
                     // Don't output the dummy character underlying the image.
                     i = next;
                 }

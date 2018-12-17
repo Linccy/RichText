@@ -1,4 +1,4 @@
-package com.linccy.richtext.parser;
+package com.linccy.richtext;
 
 import android.text.Editable;
 import android.text.Html;
@@ -9,7 +9,7 @@ import android.text.style.StrikethroughSpan;
 
 import org.xml.sax.XMLReader;
 
-public class MyTagHandler implements Html.TagHandler {
+public class TagHandler implements Html.TagHandler {
     private static final String BULLET_LI = "li";
     private static final String STRIKETHROUGH_S = "s";
     private static final String STRIKETHROUGH_STRIKE = "strike";

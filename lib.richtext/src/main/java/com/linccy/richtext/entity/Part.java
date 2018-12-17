@@ -1,4 +1,4 @@
-package com.linccy.richtext;
+package com.linccy.richtext.entity;
 
 public class Part {
     private int start;

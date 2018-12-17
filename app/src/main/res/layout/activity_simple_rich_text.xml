@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-    <com.linccy.richtext.SimpleRichEditor
+    <com.linccy.richtext.RichEditText
         android:id="@+id/edit_content"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="6dp"
-        android:background="#ffffff"
-        android:enabled="true"
-        android:layout_weight="1"
-        android:gravity="top"
-        android:hint="说点什么吧~"
-        android:inputType="textMultiLine"
-        android:maxLines="20"
-        android:minLines="3"
-        android:scrollbars="vertical" />
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@null"
+        android:gravity="start"
+        android:hint="输入内容"
+        android:maxHeight="300dp"
+        android:minLines="5"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#000000"
+        android:textColorHint="#838383"
+        android:textSize="20sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,21 +34,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AT用户"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"/>
 
         <Button
             android:id="@+id/add_tag1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="#标签"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"/>
 
         <Button
             android:id="@+id/add_tag2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$标签"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"/>
 
     </LinearLayout>
 
