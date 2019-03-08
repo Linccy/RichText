@@ -14,7 +14,7 @@ import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 
 /**
- * Created by yixuanxuan on 16/8/8.
+ * .MD 转换
  */
 public class MarkdownParser {
 

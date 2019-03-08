@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.os.Parcel;
 import android.text.Layout;
 
-public class RichQuoteSpan extends android.text.style.QuoteSpan {
+public class QuoteSpan extends android.text.style.QuoteSpan {
     private static final int DEFAULT_STRIPE_WIDTH = 2;
     private static final int DEFAULT_GAP_WIDTH = 2;
     private static final int DEFAULT_COLOR = 0xff0000ff;
@@ -14,13 +14,13 @@ public class RichQuoteSpan extends android.text.style.QuoteSpan {
     private int quoteStripeWidth;
     private int quoteGapWidth;
 
-    public RichQuoteSpan(int quoteColor, int quoteStripeWidth, int quoteGapWidth) {
+    public QuoteSpan(int quoteColor, int quoteStripeWidth, int quoteGapWidth) {
         this.quoteColor = quoteColor != 0 ? quoteColor : DEFAULT_COLOR;
         this.quoteStripeWidth = quoteStripeWidth != 0 ? quoteStripeWidth : DEFAULT_STRIPE_WIDTH;
         this.quoteGapWidth = quoteGapWidth != 0 ? quoteGapWidth : DEFAULT_GAP_WIDTH;
     }
 
-    public RichQuoteSpan(Parcel src) {
+    public QuoteSpan(Parcel src) {
         super(src);
         this.quoteColor = src.readInt();
         this.quoteStripeWidth = src.readInt();

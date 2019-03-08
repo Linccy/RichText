@@ -22,11 +22,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputConnectionWrapper;
 
-import com.linccy.richtext.util.MatchRule;
-import com.linccy.richtext.watcher.TextWatcherAdapter;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_ARTICLE;
+import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_K_SITE;
+import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_LINK;
+import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_USER;
 
 
 /**
@@ -35,16 +39,17 @@ import java.util.regex.Pattern;
  * 具有Tag删除判断，和光标定位判断；预防用户胡乱篡改
  *
  * @author linchenxi
- * @version 1.1
+ * @version 1.0.0
  */
+@SuppressWarnings("all")
 public class RichEditText extends AppCompatEditText {
-    public static final String MATCH_MENTION = MatchRule.MATCH_MENTION;
-    public static final String MATCH_TOPIC = MatchRule.MATCH_TOPIC;
-    public static final String MATCH_URI = MatchRule.MATCH_URI;
-    public static final String MATCH_REALM_NAME = MatchRule.MATCH_REALM_NAME;
-    public static final int AT_USER_TEXT_COLOR = -11172680;
+    public static final String MATCH_MENTION = RichText.MATCH_MENTION;
+    public static final String MATCH_TOPIC = RichText.MATCH_TOPIC;
+    public static final String MATCH_URI = RichText.MATCH_URI;
+    public static final String MATCH_REALM_NAME = RichText.MATCH_REALM_NAME;
+    public static final int AT_USER_TEXT_COLOR = 0xFF6482D9;
     public static final int ADD_TOPIC_TEXT_COLOR = AT_USER_TEXT_COLOR;
-    public static final int ADD_LINK_TEXT_COLOR = -11172680;
+    public static final int ADD_LINK_TEXT_COLOR = 0xFF6482D9;
     public static boolean DEBUG = false;
     private static final String TAG = RichEditText.class.getName();
     private final RichEditText.TagSpanTextWatcher mTagSpanTextWatcher = new RichEditText.TagSpanTextWatcher();
@@ -77,6 +82,7 @@ public class RichEditText extends AppCompatEditText {
     @Override
     public void setText(CharSequence text, BufferType type) {
         Spannable spannable = new SpannableString(text);
+        spannable = firstMatchMention(spannable);
         spannable = matchMention(spannable);
         spannable = matchTopic(spannable);
         spannable = matchLink(spannable);
@@ -137,7 +143,7 @@ public class RichEditText extends AppCompatEditText {
             // Handle to the clipboard service.
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             // Handle the data.
-            if (clipboard != null && clipboard.hasPrimaryClip()) {
+            if (clipboard.hasPrimaryClip()) {
                 ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                 if (item != null) {
                     // Gets the clipboard date to string and do trim
@@ -215,25 +221,25 @@ public class RichEditText extends AppCompatEditText {
         if (mentions == null || mentions.length == 0)
             return;
 
-        StringBuilder mentionStr = new StringBuilder();
+        String mentionStr = "";
 
         for (String mention : mentions) {
             if (mention == null || TextUtils.isEmpty(mention = mention.trim())
                     || TextUtils.isEmpty(mention = filterDirty(mention)))
                 continue;
             if (needSpace) {
-                mentionStr.append(String.format("@%s", mention).trim() + " ");
+                mentionStr += String.format("@%s", mention).trim() + " ";
             } else {
-                mentionStr.append(String.format("@%s", mention).trim());
+                mentionStr += String.format("@%s", mention).trim();
             }
         }
         if (TextUtils.isEmpty(mentionStr))
             return;
 
         SpannableString spannable = new SpannableString(mentionStr);
-        RichEditText.matchMention(spannable);
+        matchMention(spannable);
 
-        replaceLastChar("@", spannable);
+        replaceLastChar(mOnKeyArrivedListener != null ? "@" : "", spannable);
     }
 
     /**
@@ -246,13 +252,13 @@ public class RichEditText extends AppCompatEditText {
         if (topics == null || topics.length == 0)
             return;
 
-        StringBuilder topicStr = new StringBuilder();
+        String topicStr = "";
 
         for (String topic : topics) {
             if (topic == null || TextUtils.isEmpty(topic = topic.trim())
                     || TextUtils.isEmpty(topic = filterDirty(topic)))
                 continue;
-            topicStr.append(String.format("#%s# ", topic));
+            topicStr += String.format("#%s# ", topic);
         }
         if (TextUtils.isEmpty(topicStr))
             return;
@@ -260,13 +266,13 @@ public class RichEditText extends AppCompatEditText {
         SpannableString spannable = new SpannableString(topicStr);
         RichEditText.matchTopic(spannable);
 
-        replaceLastChar("#", spannable);
+        replaceLastChar(mOnKeyArrivedListener != null ? "#" : "", spannable);
     }
 
     /**
      * 添加链接字符串
      *
-     * @param links
+     * @param topics 话题，不含#
      */
     @SuppressWarnings("unused")
     public void appendLink(String... links) {
@@ -288,10 +294,6 @@ public class RichEditText extends AppCompatEditText {
         RichEditText.matchLink(spannable);
 
         replaceLastChar(" ", spannable);
-    }
-
-    public String toRealResult() {
-        return getText().toString();
     }
 
     private class TagSpanTextWatcher extends TextWatcherAdapter {
@@ -400,9 +402,9 @@ public class RichEditText extends AppCompatEditText {
             appendMention(false, str);
             matcherEnd = currMatcherEnd;
         }
-        if (TextUtils.isEmpty(getText())) {
+        if(TextUtils.isEmpty(getText())) {
             append(text);
-        } else if (matcherEnd > 0 && matcherEnd < text.length()) {
+        } else if(matcherEnd > 0 && matcherEnd < text.length()) {
             CharSequence end = text.subSequence(matcherEnd, text.length());
             if (String.valueOf(end).startsWith(" ")) {
                 append(end);
@@ -426,6 +428,106 @@ public class RichEditText extends AppCompatEditText {
             log("matchMention:" + str + " " + matcherStart + " " + matcherEnd);
         }
 
+        return spannable;
+    }
+
+    public Spannable firstMatchMention(Spannable spannable) {
+        String text = spannable.toString();
+
+        if (TextUtils.isEmpty(text)) {
+            return spannable;
+        }
+
+        Pattern pattern = Pattern.compile(RichText.MATCH_ELEMENT);
+        Matcher matcher = pattern.matcher(text);
+
+        List<RichTextView.MatcherFlag> matcherFlags = new ArrayList<>();
+
+        while (matcher.find()) {
+            @RichTextView.MatcherFlag.RangeFlagType int type;
+            final String tagBody = matcher.group(0);
+            final String tagType = matcher.group(4);
+            if (TextUtils.isEmpty(tagType)) {
+                type = RichTextView.MatcherFlag.MatcherFlagType.UNDEFINE;
+            } else {
+                switch (tagType) {
+                    case TAG_TYPE_USER:
+                        type = RichTextView.MatcherFlag.MatcherFlagType.USER;
+                        break;
+
+                    case TAG_TYPE_LINK:
+                        type = RichTextView.MatcherFlag.MatcherFlagType.LINK;
+                        break;
+
+                    case TAG_TYPE_ARTICLE:
+                        type = RichTextView.MatcherFlag.MatcherFlagType.ARTICLE;
+                        break;
+
+                    case TAG_TYPE_K_SITE:
+                        type = RichTextView.MatcherFlag.MatcherFlagType.K_SITE;
+                        break;
+
+                    default:
+                        type = RichTextView.MatcherFlag.MatcherFlagType.UNDEFINE;
+                        break;
+                }
+            }
+
+            final String paramStr = matcher.group(2);
+            String tagContent;
+            switch (type) {
+
+                case RichTextView.MatcherFlag.MatcherFlagType.LINK:
+                    tagContent = RichTextInitalor.getLinkStr(getContext());
+                    break;
+
+                case RichTextView.MatcherFlag.MatcherFlagType.USER:
+                case RichTextView.MatcherFlag.MatcherFlagType.ARTICLE:
+                case RichTextView.MatcherFlag.MatcherFlagType.K_SITE:
+                case RichTextView.MatcherFlag.MatcherFlagType.UNDEFINE:
+                default:
+                    tagContent = matcher.group(3);
+                    break;
+            }
+
+            if (tagBody == null || tagType == null || paramStr == null || tagContent == null) {
+                continue;
+            }
+
+            int matcherStart = matcher.start();
+            int matcherEnd = matcher.end();
+            matcherFlags.add(new RichTextView.MatcherFlag(matcherStart, type, paramStr, tagBody, tagContent));
+            log("matchMention:" + paramStr + " " + matcherStart + " " + matcherEnd);
+        }
+
+        if (matcherFlags.isEmpty()) {
+            return spannable;
+        }
+
+        //处理和替换
+        StringBuilder result = new StringBuilder();
+        String temp = "" + spannable.toString();//深拷贝
+        int index = 0;
+        for (int i = 0; i < matcherFlags.size(); i++) {
+            final RichTextView.MatcherFlag flag = matcherFlags.get(i);
+            result.append(temp.substring(index, flag.getStart()));
+            result.append(flag.getShouldReplacedStr());
+            index = flag.getStart() + flag.getOriginalStr().length();
+            flag.setStart(result.length() - flag.getShouldReplacedStr().length());
+            if (i == matcherFlags.size() - 1) {
+                result.append(temp.substring(index, temp.length()));
+            }
+        }
+
+        spannable = new SpannableString(result);
+
+        for (int i = 0; i < matcherFlags.size(); i++) {
+            final RichTextView.MatcherFlag flag = matcherFlags.get(i);
+            if (RichTextView.MatcherFlag.MatcherFlagType.UNDEFINE == flag.getType()) {
+                continue;
+            }
+            spannable.setSpan(new RichEditText.TagSpan(result.toString(), ADD_TOPIC_TEXT_COLOR), flag.getStart(), flag.getStart() + flag.getShouldReplacedStr().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         return spannable;
     }
 
@@ -522,7 +624,6 @@ public class RichEditText extends AppCompatEditText {
         @Override
         public void updateDrawState(TextPaint ds) {
             //log("TagSpan:updateDrawState:" + isPreDeleteState);
-            ds.setFakeBoldText(true);
             if (willRemove) {
                 ds.setColor(0xFFFFFFFF);
                 ds.bgColor = textColor;

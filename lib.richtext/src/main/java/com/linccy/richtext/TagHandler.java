@@ -1,4 +1,4 @@
-package com.linccy.richtext.parser;
+package com.linccy.richtext;
 
 import android.text.Editable;
 import android.text.Html;
