@@ -1,9 +1,7 @@
 package com.linccy.richtext;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
-import android.net.Uri;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
@@ -22,8 +20,6 @@ import android.view.View;
 import android.view.ViewDebug;
 import android.widget.TextView;
 
-import com.linccy.richtext.util.MatchRule;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -40,9 +36,9 @@ import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_USER;
 
 public class RichTextView extends FolderTextView {
     public static final String TAG = RichTextView.class.getName();
-    public static final String MATCH_MENTION = MatchRule.MATCH_ELEMENT; //这个和其他不同
-    public static final String MATCH_URI = MatchRule.MATCH_URI;
-    public static final String MATCH_REALM_NAME = MatchRule.MATCH_REALM_NAME;
+    public static final String MATCH_MENTION = RichText.MATCH_ELEMENT; //这个和其他不同
+    public static final String MATCH_URI = RichText.MATCH_URI;
+    public static final String MATCH_REALM_NAME = RichText.MATCH_REALM_NAME;
 
     public static final int AT_USER_TEXT_COLOR = 0xFF6482D9;
     public static final int ADD_TOPIC_TEXT_COLOR = AT_USER_TEXT_COLOR;
@@ -335,7 +331,7 @@ public class RichTextView extends FolderTextView {
 
         private static final String PARAM_ID = "id";
         private static final String PARAM_LINK = "href";
-        private static final String MATCH_PARAMS = MatchRule.MATCH_PARAMS;
+        private static final String MATCH_PARAMS = RichText.MATCH_PARAMS;
         private @IntRange(from = 0)
         int start;
         private @RangeFlagType

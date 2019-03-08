@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context="com.linccy.demo.RichTextViewActivity">
+
+    <com.linccy.richtext.RichTextView
+        android:id="@+id/source_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="4"
+        android:ellipsize="end"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#454545"
+        android:textSize="16sp"
+        app:foldEnable="true"
+        app:canFoldAgain="true"
+        app:foldLine="4"
+        app:foldText="收起"
+        app:unFoldText="展开"
+        tools:text="韩国政府已经宣布，现行的一些财税政策可以应用到数字货币上，而且预计在今年上半年就可以启动实施了。虽然韩国政府也曾考虑过对数字货币征收其他税项，但是他们此前认为在现行的税务系统下，实施起来难度较大。"/>
+
+
+
+</LinearLayout>
