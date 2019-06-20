@@ -3,11 +3,17 @@
 buildscript {
     
     repositories {
-        google()
+        mavenCentral()
+        maven { url "https://maven.google.com" }
         jcenter()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+        maven { url "https://raw.githubusercontent.com/umeng/mvn-repo-umeng/master/repository" }
+        maven { url "https://jitpack.io" }
+        maven { url "https://dl.google.com/dl/android/maven2/" }
+        maven { url 'http://developer.huawei.com/repo/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,8 +23,27 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
+        mavenCentral()
+        maven { url "https://maven.google.com" }
         jcenter()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+        maven { url "https://raw.githubusercontent.com/umeng/mvn-repo-umeng/master/repository" }
+        maven { url "https://jitpack.io" }
+        maven { url "https://dl.google.com/dl/android/maven2/" }
+        maven { url 'http://developer.huawei.com/repo/' }
+    }
+
+    ext {
+        compileSdkVersion = 28
+        buildToolsVersion = "28.0.3"
+        minSdkVersion = 16
+        targetSdkVersion = 28
+        supportLibVersion = '27.1.1'
+        supportV4 = "com.android.support:support-v4:$supportLibVersion"
+        supportV7 = "com.android.support:appcompat-v7:$supportLibVersion"
+        supportDesign = "com.android.support:design:$supportLibVersion"
+        supportAppcompat = "com.android.support:appcompat-v7:$supportLibVersion"
+        supportAnnotations = "com.android.support:support-annotations:$supportLibVersion"
     }
 }
 
