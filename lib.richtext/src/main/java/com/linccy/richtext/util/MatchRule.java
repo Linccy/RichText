@@ -6,6 +6,10 @@ package com.linccy.richtext.util;
 
 public interface MatchRule {
 
-    //    String MATCH_REALM_NAME = "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+    //自定义标签属性过滤
+    String MATCH_PARAMS = "(.*?)=['\"](.*?)['\"]";// id="123" or href="www.lin.com"
+
+    //自定义标签匹配
+    String MATCH_ELEMENT = "<(bk-.*?)[^<>]*?\\s(.*?)>(.*?)</bk-(.*?)>";  //"<" + element + "[^<>]*?\\s" + attr + "=['\"]?(.*?)>(.*?)</" + element+">";
 
 }

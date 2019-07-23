@@ -36,9 +36,7 @@ import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_USER;
 
 public class RichTextView extends FolderTextView {
     public static final String TAG = RichTextView.class.getName();
-    public static final String MATCH_MENTION = RichText.MATCH_ELEMENT; //这个和其他不同
-    public static final String MATCH_URI = RichText.MATCH_URI;
-    public static final String MATCH_REALM_NAME = RichText.MATCH_REALM_NAME;
+    public String MATCH_MENTION;
 
     public static final int AT_USER_TEXT_COLOR = 0xFF6482D9;
     public static final int ADD_TOPIC_TEXT_COLOR = AT_USER_TEXT_COLOR;
@@ -58,6 +56,7 @@ public class RichTextView extends FolderTextView {
 
     public RichTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        MATCH_MENTION = RichText.defaultBuilder.getMatchElementRegix();
         setDefaultMatcherClickListener();
     }
 
@@ -231,40 +230,11 @@ public class RichTextView extends FolderTextView {
                 @Override
                 public void onClick(View widget) {
                     if (mMatcherClickListener != null) {
-                        mMatcherClickListener.onMatcherClick(flag);
+                        mMatcherClickListener.onMatcherClick(widget.getContext(), flag);
                     }
                 }
             }, flag.getStart(), flag.getStart() + flag.getShouldReplacedStr().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        return spannable;
-    }
-
-    public static Spannable matchLink(Spannable spannable) {
-        String text = spannable.toString();
-
-        Pattern uriPattern = Pattern.compile(MATCH_URI);
-        Matcher uriMatcher = uriPattern.matcher(text);
-
-        while (uriMatcher.find()) {
-            String str = uriMatcher.group();
-            int matcherStart = uriMatcher.start();
-            int matcherEnd = uriMatcher.end();
-            spannable.setSpan(new RichEditText.TagSpan(str, ADD_LINK_TEXT_COLOR), matcherStart, matcherEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            log("uri matchLink:" + str + " " + matcherStart + " " + matcherEnd);
-        }
-
-
-        Pattern realmNamePattern = Pattern.compile(MATCH_REALM_NAME);
-        Matcher realmNameMatcher = realmNamePattern.matcher(text);
-
-        while (realmNameMatcher.find()) {
-            String str = realmNameMatcher.group();
-            int matcherStart = realmNameMatcher.start();
-            int matcherEnd = realmNameMatcher.end();
-            spannable.setSpan(new RichEditText.TagSpan(str, ADD_LINK_TEXT_COLOR), matcherStart, matcherEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            log("realm name matchLink:" + str + " " + matcherStart + " " + matcherEnd);
-        }
-
         return spannable;
     }
 
@@ -440,6 +410,6 @@ public class RichTextView extends FolderTextView {
     }
 
     public interface OnMatcherClickListener {
-        void onMatcherClick(@NonNull MatcherFlag flag);
+        void onMatcherClick(Context context, @NonNull MatcherFlag flag);
     }
 }

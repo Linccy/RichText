@@ -43,10 +43,10 @@ import static com.linccy.richtext.RichTextInitalor.TAG_TYPE_USER;
  */
 @SuppressWarnings("all")
 public class RichEditText extends AppCompatEditText {
-    public static final String MATCH_MENTION = RichText.MATCH_MENTION;
-    public static final String MATCH_TOPIC = RichText.MATCH_TOPIC;
-    public static final String MATCH_URI = RichText.MATCH_URI;
-    public static final String MATCH_REALM_NAME = RichText.MATCH_REALM_NAME;
+    public static final String MATCH_MENTION = "";
+    public static final String MATCH_TOPIC = "";
+    public static final String MATCH_URI = "";
+    public static final String MATCH_REALM_NAME = "";
     public static final int AT_USER_TEXT_COLOR = 0xFF6482D9;
     public static final int ADD_TOPIC_TEXT_COLOR = AT_USER_TEXT_COLOR;
     public static final int ADD_LINK_TEXT_COLOR = 0xFF6482D9;
